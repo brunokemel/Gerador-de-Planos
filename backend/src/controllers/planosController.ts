@@ -10,10 +10,10 @@ export const criarPlano = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Campos obrigatórios ausentes" });
     }
 
-    // Gera o plano com Gemini
+    // 1. Gera o plano com Gemini
     let plano = await gerarPlanoAula(tema, faixaEtaria, duracao);
 
-    // Garante que sempre tenha as chaves esperadas
+    // 2. Normaliza para garantir que todas as chaves existam
     plano = {
       introducao_ludica: plano.introducao_ludica || "",
       objetivo_bncc: plano.objetivo_bncc || "",
@@ -21,18 +21,20 @@ export const criarPlano = async (req: Request, res: Response) => {
       rubrica_avaliacao: plano.rubrica_avaliacao || ""
     };
 
-    // Insere no Supabase convertendo para snake_case
+    // 3. Insere no Supabase (convertendo para snake_case)
     const { error } = await supabase.from("planos_aula").insert({
       tema,
       faixa_etaria: faixaEtaria,
       duracao,
       conteudo: plano,
-      autor_id: autorId || null, // opcional por enquanto
+      autor_id: autorId || null // opcional por enquanto
     });
 
     if (error) throw error;
 
+    // 4. Retorna o plano normalizado para o front
     res.status(201).json(plano);
+
   } catch (err: any) {
     console.error("Erro ao criar plano:", err);
     res.status(500).json({ message: err.message });

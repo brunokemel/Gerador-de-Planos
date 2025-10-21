@@ -4,30 +4,187 @@
   <meta charset="UTF-8">
   <title>Gerador de Plano de Aula</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; }
-    input, button { margin: .5rem 0; display: block; }
-    pre { background: #f5f5f5; padding: 1rem; border-radius: 5px; white-space: pre-wrap; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background: linear-gradient(135deg, #f9fafc, #e3f2fd);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      max-width: 650px;
+      width: 100%;
+      padding: 2.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      text-align: center;
+      color: #1565c0;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-size: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 6px rgba(25, 118, 210, 0.3);
+    }
+
+    button {
+      padding: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      background: #1976d2;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s, transform 0.1s;
+    }
+
+    button:hover {
+      background: #1565c0;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    h3 {
+      color: #1565c0;
+      margin-bottom: 0.5rem;
+    }
+
+    pre {
+      background: #f5f7fa;
+      padding: 1rem;
+      border-radius: 10px;
+      border-left: 4px solid #1976d2;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #333;
+      max-height: 250px;
+      overflow: hidden;
+      position: relative;
+      transition: max-height 0.5s ease;
+    }
+
+    pre.expanded {
+      max-height: 2000px;
+    }
+
+    #toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #1976d2;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: color 0.3s;
+    }
+
+    #toggle:hover {
+      color: #0d47a1;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      button {
+        font-size: 0.95rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Gerador de Planos de Aula com IA</h1>
-  <form id="form">
-    <label>Tema: <input id="tema" required></label>
-    <label>Faixa Etária: <input id="faixaEtaria" required></label>
-    <label>Duração: <input id="duracao" required></label>
-    <button type="submit">Gerar Plano</button>
-  </form>
+  <div class="container">
+    <h1>📘 Gerador de Planos de Aula com IA</h1>
 
-  <h3>Resultado:</h3>
-  <pre id="resultado"></pre>
+    <form id="form">
+      <label>Tema:
+        <input id="tema" placeholder="Ex: Meio ambiente" required>
+      </label>
+
+      <label>Faixa Etária:
+        <input id="faixaEtaria" placeholder="Ex: 7 a 9 anos" required>
+      </label>
+
+      <label>Duração:
+        <input id="duracao" placeholder="Ex: 40 minutos" required>
+      </label>
+
+      <button type="submit">✨ Gerar Plano</button>
+    </form>
+
+    <h3>Resultado:</h3>
+    <pre id="resultado">O plano gerado aparecerá aqui...</pre>
+    <button id="toggle">Ler mais</button>
+  </div>
 
   <script>
     const form = document.getElementById('form');
     const resultado = document.getElementById('resultado');
+    const toggleBtn = document.getElementById('toggle');
+
+    let fullText = ""; // guarda o texto completo
+    let expanded = false;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      resultado.textContent = "Gerando plano, aguarde...";
+      resultado.textContent = "⏳ Gerando plano, aguarde...";
+      toggleBtn.style.display = "none";
 
       const tema = document.getElementById('tema').value;
       const faixaEtaria = document.getElementById('faixaEtaria').value;
@@ -42,25 +199,39 @@
 
         const data = await res.json();
 
-        // Monta o texto formatado em tópicos
-        let texto = "";
-        if (data.introducao_ludica) {
-          texto += `📌 Introdução Lúdica:\n${data.introducao_ludica}\n\n`;
-        }
-        if (data.objetivo_bncc) {
-          texto += `🎯 Objetivo BNCC:\n${data.objetivo_bncc}\n\n`;
-        }
-        if (data.passo_a_passo) {
-          texto += `📝 Passo a Passo:\n${data.passo_a_passo}\n\n`;
-        }
-        if (data.rubrica_avaliacao) {
-          texto += `✅ Rubrica de Avaliação:\n${data.rubrica_avaliacao}\n\n`;
+        fullText = "";
+        if (data.introducao_ludica) fullText += `📌 Introdução Lúdica:\n${data.introducao_ludica}\n\n`;
+        if (data.objetivo_bncc) fullText += `🎯 Objetivo BNCC:\n${data.objetivo_bncc}\n\n`;
+        if (data.passo_a_passo) fullText += `📝 Passo a Passo:\n${data.passo_a_passo}\n\n`;
+        if (data.rubrica_avaliacao) fullText += `✅ Rubrica de Avaliação:\n${data.rubrica_avaliacao}\n\n`;
+
+        if (fullText.length > 400) {
+          resultado.textContent = fullText.substring(0, 400) + "...";
+          toggleBtn.style.display = "inline-block";
+        } else {
+          resultado.textContent = fullText || "⚠️ Nenhum dado retornado.";
         }
 
-        resultado.textContent = texto || "Nenhum dado retornado";
+        resultado.classList.remove("expanded");
+        expanded = false;
+        toggleBtn.textContent = "Ler mais";
+
       } catch (err) {
-        resultado.textContent = "Erro ao gerar plano: " + err.message;
+        resultado.textContent = "❌ Erro ao gerar plano: " + err.message;
       }
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      if (!expanded) {
+        resultado.textContent = fullText;
+        resultado.classList.add("expanded");
+        toggleBtn.textContent = "Ler menos";
+      } else {
+        resultado.textContent = fullText.substring(0, 400) + "...";
+        resultado.classList.remove("expanded");
+        toggleBtn.textContent = "Ler mais";
+      }
+      expanded = !expanded;
     });
   </script>
 </body>
