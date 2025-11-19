@@ -3,6 +3,8 @@ Repositório: https://github.com/brunokemel/teste2
 ## Visão geral
 -Aplicação backend em TypeScript que gera planos de aula usando a API Generative AI (Gemini) e persiste os planos no Supabase. Este -README cobre configuração, execução, decisões de arquitetura, documentação do modelo, scripts SQL e instruções de acesso.
 
+ ###### (Recomendamos Gemini pela facilidade e e praticidade que ela traz e bastante completa mesmo gratuita)
+
 1. Instruções de instalação e setup
 Pré-requisitos
 - Node.js 18+ instalado
@@ -99,7 +101,8 @@ Boas práticas implementadas:- Inicializar o cliente sob demanda (ou garantir qu
 - Validar e parsear apenas o JSON retornado pelo modelo.
 Recomendação prática para obter o id do modelo:- Rodar um script de debug com client.listModels() para obter os ids disponíveis e escolher um que suporte geração de conteúdo.
 
-## 4. Scripts SQL
+## 4. Scripts SQL 
+#### ( O suapabse foi retirado e está rodando sem banco de dados, caso queira usar eles, apenas descomente os pedaços de códigos que indica e continue os paços normalemnte)
  Criação da tabela principal (executar no SQL editor do Supabase):
 
  ```bash

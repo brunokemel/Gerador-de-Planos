@@ -1,9 +1,9 @@
 import express from "express";
-import { criarPlano, listarPlanos } from "../controllers/planosController";
+import { criarPlano } from "../controllers/planosController";
 
 const router = express.Router();
 
 router.post("/", criarPlano);
-router.get("/", listarPlanos);
+// router.get("/", listarPlanos);
 
 export default router;
