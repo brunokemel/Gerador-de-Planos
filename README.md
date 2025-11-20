@@ -102,7 +102,7 @@ Boas práticas implementadas:- Inicializar o cliente sob demanda (ou garantir qu
 Recomendação prática para obter o id do modelo:- Rodar um script de debug com client.listModels() para obter os ids disponíveis e escolher um que suporte geração de conteúdo.
 
 ## 4. Scripts SQL 
-#### ( O suapabse foi retirado e está rodando sem banco de dados, caso queira usar eles, apenas descomente os pedaços de códigos que indica e continue os paços normalemnte)
+#### ( O suapabase foi retirado e está rodando sem banco de dados, caso queira usar eles, apenas descomente os pedaços de códigos que indica e continue os paços normalemnte)
  Criação da tabela principal (executar no SQL editor do Supabase):
 
  ```bash
